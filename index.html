@@ -113,16 +113,24 @@
         <p>Elige las materias sobre las que quieres dar tu opinión:</p>
 
         <div class="card">
-            <!-- BUSCADOR DE ASIGNATURAS -->
+            <!-- BUSCADOR DE ASIGNATURAS MEJORADO -->
             <div class="input-group" style="margin-bottom: 15px;">
                 <label for="buscarAsignatura"><strong>Buscar asignatura:</strong></label>
-                <input type="text" id="buscarAsignatura" 
-                       placeholder="Escribe para filtrar asignaturas..."
-                       oninput="filtrarAsignaturas()">
+                <div class="search-container">
+                    <input type="text" id="buscarAsignatura" 
+                           placeholder="Escribe para buscar asignaturas (ignora tildes)..."
+                           oninput="filtrarAsignaturas()"
+                           onkeydown="manejarTecladoBusqueda(event)">
+                    <span class="search-icon">🔍</span>
+                    <span class="clear-search" id="clearSearch" onclick="limpiarBusqueda()" title="Limpiar búsqueda">✕</span>
+                </div>
+                <div class="search-info" id="searchInfo">
+                    <small>Puedes buscar sin tildes. Ej: "basico", "teorica", "practicas"</small>
+                </div>
             </div>
             
             <label for="selectAsignaturas"><strong>Lista de asignaturas:</strong></label>
-            <select id="selectAsignaturas" onchange="agregarAsignatura()">
+            <select id="selectAsignaturas" onchange="agregarAsignatura()" size="8">
                 <option value="">— Selecciona una asignatura —</option>
 
                 <!-- LISTA COMPLETA -->
@@ -379,6 +387,7 @@ let ratingAsignatura = 0;
 let ratingDocente = 0;
 let correoUsuario = "";
 let usandoOtroDocente = false;
+let resultadosBusqueda = [];
 
 // Descriptores para las opciones
 const descripciones = {
@@ -415,7 +424,196 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Configurar eventos para checkboxes y radios (para que funcionen en todo el label)
     configurarEventosInputs();
+    
+    // Inicializar el buscador
+    inicializarBuscador();
 });
+
+/* ========== INICIALIZAR BUSCADOR ========== */
+function inicializarBuscador() {
+    const buscarInput = document.getElementById('buscarAsignatura');
+    const clearSearch = document.getElementById('clearSearch');
+    
+    // Mostrar/ocultar botón de limpiar según contenido
+    buscarInput.addEventListener('input', function() {
+        if (this.value.trim() !== '') {
+            clearSearch.style.display = 'flex';
+        } else {
+            clearSearch.style.display = 'none';
+        }
+    });
+    
+    // Mostrar información inicial de búsqueda
+    mostrarInfoBusqueda(true);
+}
+
+/* ========== FUNCIÓN PARA NORMALIZAR TEXTOS (QUITAR TILDES MEJORADA) ========== */
+function normalizarTexto(texto) {
+    if (!texto) return '';
+    
+    return texto
+        .normalize("NFD") // Descompone caracteres con tildes (á → a + ´)
+        .replace(/[\u0300-\u036f]/g, "") // Elimina diacríticos
+        .replace(/ñ/g, "n") // Convierte ñ a n
+        .replace(/Ñ/g, "N") // Convierte Ñ a N
+        .replace(/[^a-zA-Z0-9\s]/g, "") // Elimina caracteres especiales (opcional)
+        .toLowerCase(); // Convertir a minúsculas
+}
+
+/* ========== FILTRAR ASIGNATURAS (MEJORADO) ========== */
+function filtrarAsignaturas() {
+    const busqueda = document.getElementById('buscarAsignatura').value.trim();
+    const opciones = document.querySelectorAll('#selectAsignaturas option');
+    const clearSearch = document.getElementById('clearSearch');
+    resultadosBusqueda = [];
+    
+    // Mostrar/ocultar botón de limpiar
+    if (busqueda !== '') {
+        clearSearch.style.display = 'flex';
+    } else {
+        clearSearch.style.display = 'none';
+    }
+    
+    // Mostrar información de búsqueda
+    mostrarInfoBusqueda(busqueda === '');
+    
+    if (busqueda === '') {
+        // Mostrar todas las opciones
+        opciones.forEach(opcion => {
+            opcion.style.display = 'block';
+            opcion.classList.remove('resultado-busqueda');
+        });
+        
+        // Remover mensaje de no resultados si existe
+        const noResultados = document.getElementById('noResultados');
+        if (noResultados) {
+            noResultados.remove();
+        }
+        
+        return;
+    }
+    
+    // Normalizar la búsqueda
+    const busquedaNormalizada = normalizarTexto(busqueda);
+    let encontradas = 0;
+    
+    // Filtrar opciones
+    opciones.forEach(opcion => {
+        if (opcion.value === "") {
+            opcion.style.display = 'none';
+            return;
+        }
+        
+        const textoNormalizado = normalizarTexto(opcion.textContent);
+        
+        // Buscar coincidencias
+        if (textoNormalizado.includes(busquedaNormalizada)) {
+            opcion.style.display = 'block';
+            opcion.classList.add('resultado-busqueda');
+            resultadosBusqueda.push(opcion);
+            encontradas++;
+        } else {
+            opcion.style.display = 'none';
+            opcion.classList.remove('resultado-busqueda');
+        }
+    });
+    
+    // Mostrar resultados o mensaje
+    if (encontradas > 0) {
+        // Remover mensaje de no resultados si existe
+        const noResultados = document.getElementById('noResultados');
+        if (noResultados) {
+            noResultados.remove();
+        }
+        
+        // Si hay solo un resultado, seleccionarlo automáticamente
+        if (encontradas === 1 && resultadosBusqueda[0]) {
+            // No seleccionar automáticamente, solo resaltar
+            resultadosBusqueda[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    } else {
+        mostrarMensajeNoResultados(busqueda);
+    }
+    
+    // Actualizar información de búsqueda
+    actualizarInfoResultados(encontradas, busqueda);
+}
+
+/* ========== MOSTRAR INFORMACIÓN DE BÚSQUEDA ========== */
+function mostrarInfoBusqueda(esInicial) {
+    const searchInfo = document.getElementById('searchInfo');
+    if (esInicial) {
+        searchInfo.innerHTML = '<small>🔍 Escribe para buscar asignaturas. Puedes buscar sin tildes. Ej: "basico", "teorica", "practicas"</small>';
+    }
+}
+
+function actualizarInfoResultados(encontradas, busqueda) {
+    const searchInfo = document.getElementById('searchInfo');
+    if (busqueda.trim() === '') {
+        mostrarInfoBusqueda(true);
+        return;
+    }
+    
+    if (encontradas > 0) {
+        searchInfo.innerHTML = `<small>✅ Encontradas ${encontradas} asignatura(s) con "${busqueda}"</small>`;
+        searchInfo.style.color = 'var(--success-color)';
+    } else {
+        searchInfo.innerHTML = `<small>⚠️ No se encontraron asignaturas con "${busqueda}"</small>`;
+        searchInfo.style.color = 'var(--warning-color)';
+    }
+}
+
+/* ========== MOSTRAR MENSAJE DE NO RESULTADOS ========== */
+function mostrarMensajeNoResultados(busqueda) {
+    // Remover mensaje anterior si existe
+    const noResultadosAnterior = document.getElementById('noResultados');
+    if (noResultadosAnterior) {
+        noResultadosAnterior.remove();
+    }
+    
+    // Crear nuevo mensaje
+    const noResultados = document.createElement('option');
+    noResultados.id = 'noResultados';
+    noResultados.value = '';
+    noResultados.textContent = `No se encontraron asignaturas con "${busqueda}"`;
+    noResultados.disabled = true;
+    noResultados.style.fontStyle = 'italic';
+    noResultados.style.color = 'var(--gray-medium)';
+    noResultados.style.textAlign = 'center';
+    noResultados.style.padding = '10px';
+    
+    // Insertar después de la primera opción
+    if (select.options.length > 0) {
+        select.insertBefore(noResultados, select.options[1]);
+    } else {
+        select.appendChild(noResultados);
+    }
+}
+
+/* ========== MANEJAR TECLADO EN BÚSQUEDA ========== */
+function manejarTecladoBusqueda(event) {
+    // Si presiona Enter y hay resultados, seleccionar el primero
+    if (event.key === 'Enter' && resultadosBusqueda.length > 0) {
+        event.preventDefault();
+        if (resultadosBusqueda[0]) {
+            select.value = resultadosBusqueda[0].value;
+            agregarAsignatura();
+        }
+    }
+    
+    // Si presiona Escape, limpiar búsqueda
+    if (event.key === 'Escape') {
+        limpiarBusqueda();
+    }
+}
+
+/* ========== LIMPIAR BÚSQUEDA ========== */
+function limpiarBusqueda() {
+    const buscarInput = document.getElementById('buscarAsignatura');
+    buscarInput.value = '';
+    buscarInput.focus();
+    filtrarAsignaturas();
+}
 
 /* ========== CONFIGURAR EVENTOS PARA INPUTS ========== */
 function configurarEventosInputs() {
@@ -475,54 +673,7 @@ function actualizarEstiloRadio(item) {
     }
 }
 
-/* ========== FILTRAR ASIGNATURAS (IGNORA TILDES) ========== */
-function filtrarAsignaturas() {
-    const busqueda = document.getElementById('buscarAsignatura').value;
-    const opciones = document.querySelectorAll('#selectAsignaturas option');
-    let encontradas = false;
-    
-    // Normalizar la búsqueda (quitar tildes y convertir a minúsculas)
-    const busquedaNormalizada = normalizarTexto(busqueda).toLowerCase();
-    
-    opciones.forEach(opcion => {
-        if (opcion.value === "") {
-            opcion.style.display = 'block';
-            return;
-        }
-        
-        // Normalizar el texto de la opción
-        const textoNormalizado = normalizarTexto(opcion.textContent).toLowerCase();
-        
-        if (textoNormalizado.includes(busquedaNormalizada)) {
-            opcion.style.display = 'block';
-            encontradas = true;
-        } else {
-            opcion.style.display = 'none';
-        }
-    });
-    
-    // Si hay búsqueda y no se encontró nada, mostrar mensaje
-    if (busqueda && !encontradas) {
-        if (!document.getElementById('noResultados')) {
-            const noResultados = document.createElement('option');
-            noResultados.id = 'noResultados';
-            noResultados.value = '';
-            noResultados.textContent = 'No se encontraron asignaturas con ese nombre';
-            noResultados.disabled = true;
-            select.appendChild(noResultados);
-        }
-    } else {
-        const noResultados = document.getElementById('noResultados');
-        if (noResultados) {
-            noResultados.remove();
-        }
-    }
-}
-
-/* ========== FUNCIÓN PARA NORMALIZAR TEXTOS (QUITAR TILDES) ========== */
-function normalizarTexto(texto) {
-    return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
+/* ========== AGREGAR ASIGNATURA ========== */
 function agregarAsignatura() {
     const val = select.value;
     if (!val || val === "" || val.includes("No se encontraron")) {
@@ -545,24 +696,46 @@ function agregarAsignatura() {
     renderSeleccion();
     select.value = "";
     
-    // Limpiar búsqueda
-    document.getElementById('buscarAsignatura').value = '';
-    
-    // Restaurar todas las opciones y quitar mensaje de no resultados si existe
-    document.querySelectorAll('#selectAsignaturas option').forEach(opcion => {
-        opcion.style.display = 'block';
-    });
-    
-    const noResultados = document.getElementById('noResultados');
-    if (noResultados) {
-        noResultados.remove();
-    }
+    // Limpiar búsqueda después de agregar
+    limpiarBusqueda();
     
     // Habilitar botón de continuar si hay al menos una asignatura
     document.getElementById("btnContinuarAsignaturas").disabled = asignaturas.length === 0;
     
     // Guardar en localStorage
     guardarEnLocalStorage();
+    
+    // Mostrar mensaje de éxito
+    mostrarMensajeAgregado(val);
+}
+
+/* ========== MOSTRAR MENSAJE DE AGREGADO ========== */
+function mostrarMensajeAgregado(asignatura) {
+    // Crear mensaje temporal
+    const mensaje = document.createElement('div');
+    mensaje.className = 'mensaje-agregado';
+    mensaje.innerHTML = `✅ "${asignatura}" agregada correctamente`;
+    mensaje.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--success-color);
+        color: white;
+        padding: 12px 20px;
+        border-radius: var(--radius);
+        z-index: 1000;
+        animation: slideIn 0.3s ease, fadeOut 0.3s ease 2s forwards;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    `;
+    
+    document.body.appendChild(mensaje);
+    
+    // Eliminar después de 2.5 segundos
+    setTimeout(() => {
+        if (mensaje.parentNode) {
+            mensaje.parentNode.removeChild(mensaje);
+        }
+    }, 2500);
 }
 
 /* ========== VALIDACIÓN DE CORREO ========== */
@@ -1236,7 +1409,21 @@ function reiniciar() {
     // Restaurar todas las opciones en el select
     document.querySelectorAll('#selectAsignaturas option').forEach(opcion => {
         opcion.style.display = 'block';
+        opcion.classList.remove('resultado-busqueda');
     });
+    
+    // Limpiar información de búsqueda
+    const searchInfo = document.getElementById('searchInfo');
+    if (searchInfo) {
+        searchInfo.innerHTML = '<small>🔍 Escribe para buscar asignaturas. Puedes buscar sin tildes. Ej: "basico", "teorica", "practicas"</small>';
+        searchInfo.style.color = '';
+    }
+    
+    // Ocultar botón de limpiar búsqueda
+    const clearSearch = document.getElementById('clearSearch');
+    if (clearSearch) {
+        clearSearch.style.display = 'none';
+    }
     
     // Mostrar paso inicial
     document.getElementById("pantallaFinal").classList.add("oculto");
@@ -1247,6 +1434,26 @@ function reiniciar() {
     // Limpiar formulario
     limpiarFormulario();
 }
+
+/* ========== ANIMACIONES CSS DINÁMICAS ========== */
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    
+    .resultado-busqueda {
+        background-color: rgba(106, 17, 203, 0.1) !important;
+        border-left: 4px solid var(--primary-color) !important;
+    }
+`;
+document.head.appendChild(style);
 </script>
 
 </body>
