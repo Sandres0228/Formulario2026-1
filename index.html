@@ -475,11 +475,14 @@ function actualizarEstiloRadio(item) {
     }
 }
 
-/* ========== FILTRAR ASIGNATURAS ========== */
+/* ========== FILTRAR ASIGNATURAS (IGNORA TILDES) ========== */
 function filtrarAsignaturas() {
-    const busqueda = document.getElementById('buscarAsignatura').value.toLowerCase();
+    const busqueda = document.getElementById('buscarAsignatura').value;
     const opciones = document.querySelectorAll('#selectAsignaturas option');
     let encontradas = false;
+    
+    // Normalizar la búsqueda (quitar tildes y convertir a minúsculas)
+    const busquedaNormalizada = normalizarTexto(busqueda).toLowerCase();
     
     opciones.forEach(opcion => {
         if (opcion.value === "") {
@@ -487,8 +490,10 @@ function filtrarAsignaturas() {
             return;
         }
         
-        const texto = opcion.textContent.toLowerCase();
-        if (texto.includes(busqueda)) {
+        // Normalizar el texto de la opción
+        const textoNormalizado = normalizarTexto(opcion.textContent).toLowerCase();
+        
+        if (textoNormalizado.includes(busquedaNormalizada)) {
             opcion.style.display = 'block';
             encontradas = true;
         } else {
@@ -514,6 +519,10 @@ function filtrarAsignaturas() {
     }
 }
 
+/* ========== FUNCIÓN PARA NORMALIZAR TEXTOS (QUITAR TILDES) ========== */
+function normalizarTexto(texto) {
+    return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
 /* ========== AGREGAR ASIGNATURA ========== */
 function agregarAsignatura() {
     const val = select.value;
