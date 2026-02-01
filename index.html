@@ -113,7 +113,6 @@
         <p>Elige las materias sobre las que quieres dar tu opinión:</p>
 
         <div class="card">
-            
             <label for="selectAsignaturas"><strong>Lista de asignaturas:</strong></label>
             <select id="selectAsignaturas" onchange="agregarAsignatura()">
                 <option value="">— Selecciona una asignatura —</option>
@@ -406,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
         guardarEnLocalStorage();
     });
     
-    // Configurar eventos para checkboxes y radios (para que funcionen en todo el label)
+    // Configurar eventos para checkboxes y radios
     configurarEventosInputs();
 });
 
@@ -468,49 +467,10 @@ function actualizarEstiloRadio(item) {
     }
 }
 
-/* ========== FILTRAR ASIGNATURAS ========== */
-function filtrarAsignaturas() {
-    const busqueda = document.getElementById('buscarAsignatura').value.toLowerCase();
-    const opciones = document.querySelectorAll('#selectAsignaturas option');
-    let encontradas = false;
-    
-    opciones.forEach(opcion => {
-        if (opcion.value === "") {
-            opcion.style.display = 'block';
-            return;
-        }
-        
-        const texto = opcion.textContent.toLowerCase();
-        if (texto.includes(busqueda)) {
-            opcion.style.display = 'block';
-            encontradas = true;
-        } else {
-            opcion.style.display = 'none';
-        }
-    });
-    
-    // Si hay búsqueda y no se encontró nada, mostrar mensaje
-    if (busqueda && !encontradas) {
-        if (!document.getElementById('noResultados')) {
-            const noResultados = document.createElement('option');
-            noResultados.id = 'noResultados';
-            noResultados.value = '';
-            noResultados.textContent = 'No se encontraron asignaturas con ese nombre';
-            noResultados.disabled = true;
-            select.appendChild(noResultados);
-        }
-    } else {
-        const noResultados = document.getElementById('noResultados');
-        if (noResultados) {
-            noResultados.remove();
-        }
-    }
-}
-
 /* ========== AGREGAR ASIGNATURA ========== */
 function agregarAsignatura() {
     const val = select.value;
-    if (!val || val === "" || val.includes("No se encontraron")) {
+    if (!val || val === "") {
         return;
     }
     
@@ -529,13 +489,6 @@ function agregarAsignatura() {
     asignaturas.push(val);
     renderSeleccion();
     select.value = "";
-    
-    // Limpiar búsqueda
-    document.getElementById('buscarAsignatura').value = '';
-    // Restaurar todas las opciones
-    document.querySelectorAll('#selectAsignaturas option').forEach(opcion => {
-        opcion.style.display = 'block';
-    });
     
     // Habilitar botón de continuar si hay al menos una asignatura
     document.getElementById("btnContinuarAsignaturas").disabled = asignaturas.length === 0;
@@ -608,7 +561,6 @@ function renderSeleccion() {
         
         // Hacer que toda la etiqueta sea clickeable para eliminar
         tag.onclick = (e) => {
-            // Si click en la X o en cualquier parte
             asignaturas.splice(i, 1);
             delete respuestas[i];
             renderSeleccion();
@@ -1038,7 +990,6 @@ function guardarEnLocalStorage() {
         };
         
         localStorage.setItem('opinionesArtesUNAL', JSON.stringify(datosGuardar));
-        console.log('Datos guardados en localStorage');
     } catch (error) {
         console.error('Error guardando en localStorage:', error);
     }
@@ -1207,15 +1158,9 @@ function reiniciar() {
     document.getElementById("btnContinuarAsignaturas").disabled = true;
     document.getElementById('correoInstitucional').value = '';
     document.getElementById('correoInstitucional').style.borderColor = '';
-    document.getElementById('buscarAsignatura').value = '';
     document.querySelectorAll('.validation-icon').forEach(icon => icon.style.display = 'none');
     document.getElementById('errorCorreo').style.display = 'none';
     document.getElementById('btnContinuarCorreo').disabled = true;
-    
-    // Restaurar todas las opciones en el select
-    document.querySelectorAll('#selectAsignaturas option').forEach(opcion => {
-        opcion.style.display = 'block';
-    });
     
     // Mostrar paso inicial
     document.getElementById("pantallaFinal").classList.add("oculto");
