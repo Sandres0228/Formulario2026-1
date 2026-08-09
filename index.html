@@ -14,7 +14,11 @@
 </head>
 
 <body>
-
+<!-- BOTÓN MODO OSCURO -->
+<button id="btnModo" class="btn-modo" onclick="toggleModo()">
+    <span class="icono">🌙</span>
+    <span>Modo oscuro</span>
+</button>
 <div class="contenedor">
     <div class="header-decor"></div>
 
@@ -1414,6 +1418,45 @@ function mostrarNotificacionTemporal(icono, titulo, mensaje) {
         setTimeout(() => notif.remove(), 500);
     }, 3000);
 }
+    /* ========== MODO OSCURO / CLARO ========== */
+function toggleModo() {
+    const html = document.documentElement;
+    const btn = document.getElementById('btnModo');
+    
+    if (html.getAttribute('data-theme') === 'dark') {
+        html.removeAttribute('data-theme');
+        localStorage.setItem('tema', 'light');
+        if (btn) {
+            btn.innerHTML = '<span class="icono">🌙</span><span>Modo oscuro</span>';
+        }
+    } else {
+        html.setAttribute('data-theme', 'dark');
+        localStorage.setItem('tema', 'dark');
+        if (btn) {
+            btn.innerHTML = '<span class="icono">☀️</span><span>Modo claro</span>';
+        }
+    }
+}
+
+// Cargar tema guardado al iniciar
+document.addEventListener('DOMContentLoaded', function() {
+    const tema = localStorage.getItem('tema');
+    const btn = document.getElementById('btnModo');
+    
+    if (tema === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        if (btn) {
+            btn.innerHTML = '<span class="icono">☀️</span><span>Modo claro</span>';
+        }
+    } else {
+        // Por defecto modo claro
+        document.documentElement.removeAttribute('data-theme');
+        if (btn) {
+            btn.innerHTML = '<span class="icono">🌙</span><span>Modo oscuro</span>';
+        }
+    }
+    
+});
     </script>
 
 </body>
