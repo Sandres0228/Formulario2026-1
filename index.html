@@ -393,8 +393,25 @@ const lista = document.getElementById("listaAsignaturas");
 const contador = document.getElementById("contador");
 const bloqueGeneral = document.getElementById("bloqueGeneral");
 
-// Inicialización con recuperación de datos
+// ===== UN SOLO DOMContentLoaded CON TODO =====
 document.addEventListener('DOMContentLoaded', function() {
+    // ===== MODO OSCURO =====
+    const tema = localStorage.getItem('tema');
+    const btn = document.getElementById('btnModo');
+    
+    if (tema === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        if (btn) {
+            btn.innerHTML = '<span class="icono">☀️</span><span>Modo claro</span>';
+        }
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+        if (btn) {
+            btn.innerHTML = '<span class="icono">🌙</span><span>Modo oscuro</span>';
+        }
+    }
+    
+    // ===== TU CÓDIGO EXISTENTE =====
     inicializarEstrellas();
     document.getElementById('btnAnterior').style.display = 'none';
     
@@ -1418,7 +1435,8 @@ function mostrarNotificacionTemporal(icono, titulo, mensaje) {
         setTimeout(() => notif.remove(), 500);
     }, 3000);
 }
-    /* ========== MODO OSCURO / CLARO ========== */
+
+/* ========== MODO OSCURO / CLARO ========== */
 function toggleModo() {
     const html = document.documentElement;
     const btn = document.getElementById('btnModo');
@@ -1438,26 +1456,7 @@ function toggleModo() {
     }
 }
 
-// Cargar tema guardado al iniciar
-document.addEventListener('DOMContentLoaded', function() {
-    const tema = localStorage.getItem('tema');
-    const btn = document.getElementById('btnModo');
-    
-    if (tema === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        if (btn) {
-            btn.innerHTML = '<span class="icono">☀️</span><span>Modo claro</span>';
-        }
-    } else {
-        // Por defecto modo claro
-        document.documentElement.removeAttribute('data-theme');
-        if (btn) {
-            btn.innerHTML = '<span class="icono">🌙</span><span>Modo oscuro</span>';
-        }
-    }
-    
-});
-    </script>
+</script>
 
 </body>
 </html>
