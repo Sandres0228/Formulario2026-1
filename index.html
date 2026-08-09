@@ -393,8 +393,13 @@ const lista = document.getElementById("listaAsignaturas");
 const contador = document.getElementById("contador");
 const bloqueGeneral = document.getElementById("bloqueGeneral");
 
-// ===== UN SOLO DOMContentLoaded CON TODO =====
 document.addEventListener('DOMContentLoaded', function() {
+    // ===== OCULTAR TODO AL INICIO (SOLO SE VE EL EMAIL) =====
+    document.getElementById("pasoFormulario").classList.add("oculto");
+    document.getElementById("pasoSeleccion").classList.add("oculto");
+    document.getElementById("pantallaFinal").classList.add("oculto");
+    // pasoEmail NO se oculta porque es el primero que debe verse
+    
     // ===== MODO OSCURO =====
     const tema = localStorage.getItem('tema');
     const btn = document.getElementById('btnModo');
@@ -1041,15 +1046,19 @@ function recuperarDatosGuardados() {
             ratingDocente = datos.ratingDocente || 0;
             usandoOtroDocente = datos.usandoOtroDocente || false;
             
-            // Si ya tenemos correo, ir directamente a selección
+            // Ocultar TODOS los pasos primero
+            document.getElementById("pasoEmail").classList.add("oculto");
+            document.getElementById("pasoSeleccion").classList.add("oculto");
+            document.getElementById("pasoFormulario").classList.add("oculto");
+            document.getElementById("pantallaFinal").classList.add("oculto");
+            
+            // Si tenemos correo, mostrar el paso correspondiente
             if (correoUsuario) {
                 document.getElementById("correoMostrado").textContent = correoUsuario;
                 document.getElementById("correoInstitucional").value = correoUsuario;
-                document.getElementById("pasoEmail").classList.add("oculto");
                 
                 // Si ya tenemos asignaturas, ir al formulario
                 if (asignaturas.length > 0) {
-                    document.getElementById("pasoSeleccion").classList.add("oculto");
                     document.getElementById("pasoFormulario").classList.remove("oculto");
                     mostrar();
                 } else {
@@ -1057,17 +1066,29 @@ function recuperarDatosGuardados() {
                     renderSeleccion();
                     document.getElementById("btnContinuarAsignaturas").disabled = asignaturas.length === 0;
                 }
+            } else {
+                // Si no hay correo, mostrar el paso de email
+                document.getElementById("pasoEmail").classList.remove("oculto");
             }
         } else {
-            // Si el usuario no quiere recuperar, limpiar localStorage
+            // Si el usuario no quiere recuperar, limpiar localStorage y mostrar email
             localStorage.removeItem('opinionesArtesUNAL');
+            // Asegurar que solo se vea el paso de email
+            document.getElementById("pasoEmail").classList.remove("oculto");
+            document.getElementById("pasoSeleccion").classList.add("oculto");
+            document.getElementById("pasoFormulario").classList.add("oculto");
+            document.getElementById("pantallaFinal").classList.add("oculto");
         }
     } catch (error) {
         console.error('Error recuperando datos:', error);
         localStorage.removeItem('opinionesArtesUNAL');
+        // En caso de error, mostrar solo el email
+        document.getElementById("pasoEmail").classList.remove("oculto");
+        document.getElementById("pasoSeleccion").classList.add("oculto");
+        document.getElementById("pasoFormulario").classList.add("oculto");
+        document.getElementById("pantallaFinal").classList.add("oculto");
     }
 }
-
 /* ========== NAVEGACIÓN ========== */
 function siguiente() {
     if (!validarFormulario()) {
