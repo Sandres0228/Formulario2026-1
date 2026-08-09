@@ -56,6 +56,11 @@
     --shadow-hover: rgba(124, 115, 255, 0.3);
 }
 
+/* ========== CLASE OCULTO (LA QUE FALTABA) ========== */
+.oculto {
+    display: none !important;
+}
+
 /* ========== ESTILOS BASE ========== */
 * {
     margin: 0;
