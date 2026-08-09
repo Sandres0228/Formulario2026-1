@@ -1,19 +1,62 @@
+/* ========== VARIABLES ========== */
 :root {
-    --primary-color: #6a11cb;
-    --secondary-color: #2575fc;
-    --accent-color: #ff7e5f;
-    --light-color: #f8f9fa;
-    --dark-color: #2d3748;
-    --success-color: #28a745;
-    --warning-color: #ffc107;
-    --danger-color: #dc3545;
-    --gray-light: #e9ecef;
-    --gray-medium: #adb5bd;
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    /* Colores principales - Modo Claro */
+    --primary-color: #6C63FF;
+    --primary-dark: #5A52D5;
+    --secondary-color: #4ECDC4;
+    --accent-color: #FF6B6B;
+    --success-color: #2ECC71;
+    --warning-color: #F9CA24;
+    --danger-color: #FF4757;
+    
+    /* Colores de fondo y texto - Modo Claro */
+    --bg-body: #f0f2f5;
+    --bg-container: #ffffff;
+    --bg-card: #f8f9fa;
+    --bg-input: #ffffff;
+    --bg-hover: rgba(108, 99, 255, 0.08);
+    
+    --text-primary: #2d3436;
+    --text-secondary: #636e72;
+    --text-muted: #b2bec3;
+    
+    --border-color: #dfe6e9;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --shadow-hover: rgba(108, 99, 255, 0.2);
+    
+    /* Variables de diseño */
     --radius: 16px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ========== MODO OSCURO ========== */
+[data-theme="dark"] {
+    /* Colores principales - Modo Oscuro */
+    --primary-color: #7C73FF;
+    --primary-dark: #6C63FF;
+    --secondary-color: #5DD9D0;
+    --accent-color: #FF7A7A;
+    --success-color: #3DCF7A;
+    --warning-color: #FADB4A;
+    --danger-color: #FF5E6B;
+    
+    /* Colores de fondo y texto - Modo Oscuro */
+    --bg-body: #0f0f1a;
+    --bg-container: #1a1a2e;
+    --bg-card: #252540;
+    --bg-input: #1e1e36;
+    --bg-hover: rgba(124, 115, 255, 0.15);
+    
+    --text-primary: #e8e8f0;
+    --text-secondary: #a8a8b8;
+    --text-muted: #6a6a7a;
+    
+    --border-color: #2a2a4a;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --shadow-hover: rgba(124, 115, 255, 0.3);
+}
+
+/* ========== ESTILOS BASE ========== */
 * {
     margin: 0;
     padding: 0;
@@ -22,31 +65,66 @@
 
 body {
     font-family: 'Montserrat', sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background-color: var(--bg-body);
     min-height: 100vh;
     padding: 20px;
-    color: var(--dark-color);
+    color: var(--text-primary);
     font-weight: 400;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .contenedor {
     max-width: 950px;
     margin: 0 auto;
-    background: white;
+    background: var(--bg-container);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    box-shadow: 0 8px 40px var(--shadow-color);
     overflow: hidden;
     padding: 40px;
     position: relative;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .header-decor {
-    height: 8px;
+    height: 6px;
     background: linear-gradient(to right, var(--primary-color), var(--secondary-color), var(--accent-color));
     margin: -40px -40px 30px -40px;
     border-radius: var(--radius) var(--radius) 0 0;
 }
 
+/* ========== BOTÓN MODO OSCURO ========== */
+.btn-modo {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--bg-container);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 50px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    transition: var(--transition);
+    box-shadow: 0 4px 15px var(--shadow-color);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-modo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px var(--shadow-hover);
+    border-color: var(--primary-color);
+}
+
+.btn-modo .icono {
+    font-size: 20px;
+}
+
+/* ========== TIPOGRAFÍA ========== */
 h1, h2 {
     text-align: center;
     margin-bottom: 25px;
@@ -55,17 +133,20 @@ h1, h2 {
 
 h1 {
     font-size: 2.4rem;
-    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--primary-color);
     letter-spacing: -0.5px;
+    transition: color 0.3s ease;
+}
+
+h1 .logo-icon {
+    font-size: 2.8rem;
 }
 
 h2 {
-    font-size: 1.9rem;
-    color: var(--dark-color);
+    font-size: 1.8rem;
+    color: var(--text-primary);
     letter-spacing: -0.3px;
+    transition: color 0.3s ease;
 }
 
 h3 {
@@ -74,35 +155,38 @@ h3 {
     font-size: 18px;
     color: var(--primary-color);
     padding-bottom: 10px;
-    border-bottom: 2px solid var(--gray-light);
+    border-bottom: 2px solid var(--border-color);
     font-weight: 600;
+    transition: color 0.3s ease;
 }
 
 p {
     font-size: 15px;
-    color: #555;
+    color: var(--text-secondary);
     line-height: 1.6;
     margin-bottom: 18px;
     font-weight: 400;
+    transition: color 0.3s ease;
 }
 
+/* ========== TARJETAS ========== */
 .card {
-    background: var(--light-color);
+    background: var(--bg-card);
     border-radius: var(--radius);
     padding: 25px;
     margin-bottom: 30px;
     border-left: 6px solid var(--primary-color);
     transition: var(--transition);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
 }
 
 .card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 30px var(--shadow-color);
 }
 
 .highlight-card {
-    background: linear-gradient(135deg, rgba(106, 17, 203, 0.08), rgba(37, 117, 252, 0.08));
+    background: var(--bg-hover);
     border: 2px solid var(--primary-color);
     padding: 25px;
     border-radius: var(--radius);
@@ -110,6 +194,7 @@ p {
     text-align: center;
     position: relative;
     overflow: hidden;
+    transition: background-color 0.3s ease;
 }
 
 .highlight-card::before {
@@ -130,60 +215,63 @@ p {
 
 .highlight-card .materia-nombre {
     font-size: 1.4rem;
-    color: var(--dark-color);
+    color: var(--text-primary);
     font-weight: 600;
     margin-top: 10px;
-    padding: 12px;
-    background: white;
+    padding: 12px 24px;
+    background: var(--bg-container);
     border-radius: 12px;
     display: inline-block;
-    border: 2px solid var(--gray-light);
+    border: 2px solid var(--border-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* ========== INFO BOX ========== */
+.info-box {
+    background: var(--bg-hover);
+    border-radius: var(--radius);
+    padding: 25px;
+    margin: 25px 0;
+    text-align: center;
+    border: 2px dashed var(--primary-color);
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+/* ========== FORMULARIOS ========== */
 label {
     display: block;
     margin: 15px 0 8px;
     font-size: 15px;
     font-weight: 500;
-    color: var(--dark-color);
+    color: var(--text-primary);
+    transition: color 0.3s ease;
 }
 
-.input-group {
-    margin-bottom: 25px;
-}
-
-.input-group label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-}
-
-.input-group .icon {
-    color: var(--primary-color);
-    font-size: 18px;
-}
-
-input[type="email"], select, textarea, button, input[type="text"] {
+input[type="email"],
+input[type="text"],
+input[type="number"],
+select,
+textarea {
     width: 100%;
     padding: 16px 20px;
     margin-top: 8px;
     font-size: 15px;
-    border: 2px solid var(--gray-light);
+    border: 2px solid var(--border-color);
     border-radius: var(--radius);
     transition: var(--transition);
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
+    background: var(--bg-input);
+    color: var(--text-primary);
 }
 
-input[type="email"]:focus, select:focus, textarea:focus, input[type="text"]:focus {
+input:focus,
+select:focus,
+textarea:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 4px rgba(106, 17, 203, 0.15);
-}
-
-input[type="email"], input[type="text"] {
-    background: white;
+    box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.15);
 }
 
 textarea {
@@ -192,26 +280,136 @@ textarea {
     line-height: 1.5;
 }
 
-/* Buscador de asignaturas específico */
-#buscarAsignatura {
-    background-color: #f8f9fa;
-    border: 2px solid #e9ecef;
-    font-size: 16px;
-    padding: 14px 18px;
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236C63FF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 20px center;
+    background-size: 16px;
+    padding-right: 50px;
 }
 
-#buscarAsignatura:focus {
-    background-color: white;
+/* ========== CHECKBOXES Y RADIOS ========== */
+.checkbox-group,
+.radio-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.checkbox-item,
+.radio-item {
+    background: var(--bg-input);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 18px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    user-select: none;
+    min-height: 60px;
+}
+
+.checkbox-item:hover,
+.radio-item:hover {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+    background: var(--bg-hover);
+    transform: translateY(-2px);
 }
 
+.checkbox-item.checked,
+.radio-item.checked {
+    border-color: var(--primary-color);
+    background: var(--bg-hover);
+    box-shadow: 0 4px 15px var(--shadow-hover);
+}
+
+.checkbox-item input[type="checkbox"],
+.radio-item input[type="radio"] {
+    margin-right: 15px;
+    cursor: pointer;
+    transform: scale(1.3);
+    accent-color: var(--primary-color);
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+}
+
+.checkbox-item span,
+.radio-item span {
+    flex: 1;
+    font-size: 15px;
+    color: var(--text-primary);
+    line-height: 1.4;
+    transition: color 0.3s ease;
+}
+
+.descripcion-opcion {
+    background: var(--bg-hover);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    border-left: 6px solid var(--secondary-color);
+    font-size: 14px;
+    color: var(--text-secondary);
+    animation: fadeIn 0.3s ease;
+    line-height: 1.6;
+    transition: background-color 0.3s ease;
+}
+
+/* ========== ESTRELLAS ========== */
+.estrellas {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0 30px;
+    flex-wrap: wrap;
+}
+
+.estrellas label {
+    display: inline-block;
+    cursor: pointer;
+    margin: 0;
+}
+
+.estrellas span {
+    font-size: 38px;
+    color: var(--border-color);
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-block;
+    padding: 5px;
+}
+
+.estrellas span:hover {
+    transform: scale(1.3);
+}
+
+.estrellas span.activa {
+    color: var(--warning-color);
+    text-shadow: 0 0 25px rgba(249, 202, 36, 0.3);
+}
+
+.rating-label {
+    text-align: center;
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-top: -15px;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+
+/* ========== TAGS (Asignaturas seleccionadas) ========== */
 .tag {
     display: inline-flex;
     align-items: center;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
     color: white;
     padding: 12px 20px;
     border-radius: 30px;
@@ -219,15 +417,13 @@ textarea {
     font-size: 14px;
     cursor: pointer;
     transition: var(--transition);
-    box-shadow: 0 4px 12px rgba(106, 17, 203, 0.25);
+    box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
     font-weight: 500;
-    position: relative;
 }
 
 .tag:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 6px 18px rgba(106, 17, 203, 0.35);
-    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 25px rgba(108, 99, 255, 0.4);
 }
 
 .tag .close {
@@ -251,26 +447,9 @@ textarea {
     background: rgba(255, 255, 255, 0.3);
 }
 
-.contador, .progreso {
-    text-align: center;
-    font-size: 15px;
-    color: var(--gray-medium);
-    margin-top: 20px;
-    padding: 15px;
-    background: var(--light-color);
-    border-radius: var(--radius);
-    font-weight: 500;
-}
-
-.progreso {
-    font-weight: 600;
-    color: var(--primary-color);
-    background: rgba(106, 17, 203, 0.1);
-    border: 2px solid rgba(106, 17, 203, 0.2);
-}
-
+/* ========== BOTONES ========== */
 .boton {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
     color: white;
     border: none;
     padding: 18px 28px;
@@ -284,14 +463,14 @@ textarea {
     align-items: center;
     justify-content: center;
     gap: 12px;
-    box-shadow: 0 6px 20px rgba(106, 17, 203, 0.3);
+    box-shadow: 0 6px 25px rgba(108, 99, 255, 0.35);
     letter-spacing: 0.3px;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .boton:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(106, 17, 203, 0.4);
-    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    box-shadow: 0 10px 35px rgba(108, 99, 255, 0.45);
 }
 
 .boton:active {
@@ -299,15 +478,14 @@ textarea {
 }
 
 .boton:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
     transform: none;
-    background: var(--gray-medium);
     box-shadow: none;
 }
 
 .boton-sec {
-    background: white;
+    background: transparent;
     color: var(--primary-color);
     border: 2px solid var(--primary-color);
     box-shadow: none;
@@ -316,7 +494,7 @@ textarea {
 .boton-sec:hover {
     background: var(--primary-color);
     color: white;
-    border-color: var(--primary-color);
+    box-shadow: 0 6px 25px rgba(108, 99, 255, 0.35);
 }
 
 .botones-container {
@@ -329,133 +507,38 @@ textarea {
     flex: 1;
 }
 
-.estrellas {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin: 20px 0 30px;
-    flex-wrap: wrap;
-}
-
-.estrellas label {
-    display: inline-block;
-    cursor: pointer;
-    margin: 0;
-    position: relative;
-}
-
-.estrellas span {
-    font-size: 38px;
-    color: var(--gray-light);
-    cursor: pointer;
-    transition: var(--transition);
-    text-shadow: 0 3px 8px rgba(0,0,0,0.15);
-    display: inline-block;
-    padding: 5px;
-}
-
-.estrellas span:hover {
-    transform: scale(1.3);
-}
-
-.estrellas span.activa {
-    color: var(--warning-color);
-    text-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
-}
-
-.rating-label {
+/* ========== CONTADOR Y PROGRESO ========== */
+.contador,
+.progreso {
     text-align: center;
     font-size: 15px;
-    color: var(--gray-medium);
-    margin-top: -15px;
-    margin-bottom: 25px;
-    font-weight: 500;
-}
-
-.oculto {
-    display: none !important;
-}
-
-.checkbox-group, .radio-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 15px;
-    margin-top: 15px;
-}
-
-/* CHECKBOXES Y RADIOS MEJORADOS */
-.checkbox-item, .radio-item {
-    background: white;
-    border: 2px solid var(--gray-light);
+    color: var(--text-muted);
+    margin-top: 20px;
+    padding: 15px;
+    background: var(--bg-card);
     border-radius: var(--radius);
-    padding: 18px;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
     font-weight: 500;
-    position: relative;
-    user-select: none;
-    min-height: 60px;
+    transition: background-color 0.3s ease;
 }
 
-.checkbox-item:hover, .radio-item:hover {
-    border-color: var(--primary-color);
-    background: rgba(106, 17, 203, 0.05);
-    transform: translateY(-2px);
+.progreso {
+    font-weight: 600;
+    color: var(--primary-color);
+    background: var(--bg-hover);
+    border: 2px solid var(--border-color);
 }
 
-.checkbox-item.checked, .radio-item.checked {
-    border-color: var(--primary-color);
-    background: rgba(106, 17, 203, 0.1);
-    box-shadow: 0 4px 12px rgba(106, 17, 203, 0.15);
-}
-
-.checkbox-item input[type="checkbox"], 
-.radio-item input[type="radio"] {
-    margin-right: 15px;
-    cursor: pointer;
-    transform: scale(1.3);
-    accent-color: var(--primary-color);
-}
-
-/* Estilo específico para checkboxes dentro de labels */
-.checkbox-item input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-}
-
-.radio-item input[type="radio"] {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-}
-
-/* Texto dentro de checkbox/radio */
-.checkbox-item span, .radio-item span {
-    flex: 1;
-    font-size: 15px;
-    color: var(--dark-color);
-    line-height: 1.4;
-}
-
-.descripcion-opcion {
-    background: rgba(37, 117, 252, 0.1);
-    border-radius: var(--radius);
-    padding: 18px;
-    margin-top: 15px;
-    margin-bottom: 25px;
-    border-left: 6px solid var(--secondary-color);
+/* ========== ERRORES ========== */
+.error-message {
+    color: var(--danger-color);
     font-size: 14px;
-    color: var(--dark-color);
-    animation: fadeIn 0.3s ease;
-    line-height: 1.6;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    margin-top: 8px;
+    padding: 10px 15px;
+    background: rgba(255, 71, 87, 0.1);
+    border-radius: var(--radius);
+    border-left: 4px solid var(--danger-color);
+    display: none;
+    font-weight: 500;
 }
 
 .required {
@@ -464,18 +547,7 @@ textarea {
     font-weight: bold;
 }
 
-.error-message {
-    color: var(--danger-color);
-    font-size: 14px;
-    margin-top: 8px;
-    padding: 10px 15px;
-    background: rgba(220, 53, 69, 0.1);
-    border-radius: var(--radius);
-    border-left: 4px solid var(--danger-color);
-    display: none;
-    font-weight: 500;
-}
-
+/* ========== LOGO ========== */
 .logo {
     text-align: center;
     margin-bottom: 25px;
@@ -495,135 +567,89 @@ textarea {
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
-.info-box {
-    background: linear-gradient(135deg, rgba(106, 17, 203, 0.1), rgba(37, 117, 252, 0.1));
-    border-radius: var(--radius);
-    padding: 25px;
-    margin: 25px 0;
+/* ========== VALIDACIÓN EMAIL ========== */
+.email-validation {
+    position: relative;
+}
+
+.email-validation .validation-icon {
+    position: absolute;
+    right: 20px;
+    top: 55%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    display: none;
+}
+
+.email-validation .validation-icon.valid {
+    color: var(--success-color);
+}
+
+.email-validation .validation-icon.invalid {
+    color: var(--danger-color);
+}
+
+.email-instructions {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 10px;
     text-align: center;
-    border: 2px dashed var(--primary-color);
-    font-weight: 500;
 }
 
+/* ========== INPUT OTRO DOCENTE ========== */
 .input-otro-docente {
     margin-top: 15px;
     animation: slideDown 0.3s ease;
     padding: 15px;
-    background: rgba(106, 17, 203, 0.05);
+    background: var(--bg-hover);
     border-radius: var(--radius);
     border: 1px dashed var(--primary-color);
+    transition: background-color 0.3s ease;
 }
 
 @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Estilo para el select cuando está en modo búsqueda */
-#selectAsignaturas option[style*="display: none"] {
-    display: none;
-}
-
-#selectAsignaturas option[disabled] {
-    color: var(--gray-medium);
-    font-style: italic;
-    text-align: center;
-    padding: 10px;
-}
-
-@media (max-width: 768px) {
-    .contenedor {
-        padding: 25px;
-        margin: 10px;
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
     }
-    
-    .header-decor {
-        margin: -25px -25px 20px -25px;
-    }
-    
-    h1 {
-        font-size: 2rem;
-    }
-    
-    h2 {
-        font-size: 1.6rem;
-    }
-    
-    .checkbox-group, .radio-group {
-        grid-template-columns: 1fr;
-    }
-    
-    .botones-container {
-        flex-direction: column;
-    }
-    
-    .estrellas span {
-        font-size: 32px;
-    }
-    
-    .highlight-card .materia-nombre {
-        font-size: 1.2rem;
-        padding: 10px;
-    }
-    
-    input[type="email"], select, textarea, button, input[type="text"] {
-        padding: 14px 18px;
-    }
-    
-    .checkbox-item, .radio-item {
-        padding: 15px;
-        min-height: 55px;
-    }
-    
-    .checkbox-item input[type="checkbox"], 
-    .radio-item input[type="radio"] {
-        transform: scale(1.2);
-        margin-right: 12px;
-    }
-    
-    .tag {
-        padding: 10px 16px;
-        font-size: 13px;
-    }
-    
-    .tag .close {
-        font-size: 18px;
-        width: 20px;
-        height: 20px;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-@media (max-width: 480px) {
-    .contenedor {
-        padding: 20px;
+/* ========== ANIMACIONES ========== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
     }
-    
-    h1 {
-        font-size: 1.8rem;
-    }
-    
-    h2 {
-        font-size: 1.4rem;
-    }
-    
-    .estrellas span {
-        font-size: 28px;
-    }
-    
-    .checkbox-item, .radio-item {
-        padding: 12px;
-        min-height: 50px;
-    }
-    
-    .checkbox-item span, .radio-item span {
-        font-size: 14px;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
+@keyframes bounce {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* ========== COMPLETADO ========== */
 .completion-message {
     text-align: center;
     padding: 50px 20px;
@@ -640,18 +666,14 @@ textarea {
     animation: bounce 2s infinite;
 }
 
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
-}
-
 .data-summary {
-    background: var(--light-color);
+    background: var(--bg-card);
     border-radius: var(--radius);
     padding: 25px;
     margin-top: 35px;
-    border: 2px solid var(--gray-light);
+    border: 2px solid var(--border-color);
     text-align: left;
+    transition: background-color 0.3s ease;
 }
 
 .data-summary h3 {
@@ -661,12 +683,13 @@ textarea {
 }
 
 .respuesta-item {
-    background: white;
+    background: var(--bg-container);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 20px;
     border-left: 4px solid var(--primary-color);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    box-shadow: 0 3px 15px var(--shadow-color);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .respuesta-item h4 {
@@ -689,16 +712,17 @@ textarea {
 }
 
 .respuesta-detalle strong {
-    color: var(--dark-color);
+    color: var(--text-primary);
 }
 
 .representantes-info {
-    background: linear-gradient(135deg, rgba(106, 17, 203, 0.05), rgba(37, 117, 252, 0.05));
+    background: var(--bg-hover);
     border-radius: var(--radius);
     padding: 20px;
     margin-top: 30px;
-    border: 1px solid rgba(106, 17, 203, 0.2);
+    border: 1px solid var(--border-color);
     text-align: center;
+    transition: background-color 0.3s ease;
 }
 
 .representantes-info h4 {
@@ -707,29 +731,7 @@ textarea {
     font-weight: 600;
 }
 
-.email-validation {
-    position: relative;
-}
-
-.email-validation .validation-icon {
-    position: absolute;
-    right: 20px;
-    top: 55%;
-    transform: translateY(-50%);
-    font-size: 20px;
-    display: none;
-}
-
-.email-validation .validation-icon.valid {
-    color: var(--success-color);
-    display: block;
-}
-
-.email-validation .validation-icon.invalid {
-    color: var(--danger-color);
-    display: block;
-}
-
+/* ========== PANTALLA EMAIL ========== */
 .paso-email {
     text-align: center;
 }
@@ -738,107 +740,14 @@ textarea {
     margin-bottom: 30px;
 }
 
-.email-instructions {
-    font-size: 14px;
-    color: var(--gray-medium);
-    margin-top: 10px;
-    text-align: center;
-}
-
-/* Estilos para indicador de autoguardado */
-.autosave-indicator {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--success-color);
-    color: white;
-    padding: 10px 20px;
-    border-radius: var(--radius);
-    font-size: 14px;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-    z-index: 1000;
-}
-
-.autosave-indicator.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Mejora para el select en dispositivos móviles */
-select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236a11cb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 20px center;
-    background-size: 16px;
-    padding-right: 50px;
-}
-
-/* Estado de carga para botones */
-.boton.loading {
-    position: relative;
-    color: transparent;
-}
-
-.boton.loading::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* Mejora para etiquetas de estrellas */
-.estrellas label {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Ajuste para checkboxes y radios en modo móvil */
-@media (hover: none) {
-    .checkbox-item:hover, .radio-item:hover {
-        transform: none;
-        border-color: var(--gray-light);
-        background: white;
-    }
-    
-    .checkbox-item.checked:hover, .radio-item.checked:hover {
-        border-color: var(--primary-color);
-        background: rgba(106, 17, 203, 0.1);
-        transform: none;
-    }
-    
-    .tag:hover {
-        transform: none;
-        box-shadow: 0 4px 12px rgba(106, 17, 203, 0.25);
-    }
-    
-    .boton:hover {
-        transform: none;
-        box-shadow: 0 6px 20px rgba(106, 17, 203, 0.3);
-    }
-
-    /* Overlay de carga */
+/* ========== OVERLAY DE CARGA ========== */
 #overlayCarga {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -847,33 +756,47 @@ select {
 }
 
 .overlay-contenido {
-    background: white;
+    background: var(--bg-container);
     padding: 40px;
     border-radius: 20px;
     text-align: center;
     max-width: 400px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    box-shadow: 0 20px 60px var(--shadow-color);
+    transition: background-color 0.3s ease;
+}
+
+.overlay-contenido h3 {
+    border-bottom: none;
+    margin-top: 0;
+}
+
+.overlay-contenido p {
+    color: var(--text-secondary);
 }
 
 .spinner {
     width: 50px;
     height: 50px;
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #7B2FBE;
+    border: 5px solid var(--border-color);
+    border-top: 5px solid var(--primary-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 0 auto 20px;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .barra-progreso {
     width: 100%;
     height: 8px;
-    background: #f0f0f0;
+    background: var(--border-color);
     border-radius: 10px;
     overflow: hidden;
     margin: 15px 0 10px;
@@ -881,7 +804,7 @@ select {
 
 .barra-llenado {
     height: 100%;
-    background: linear-gradient(90deg, #7B2FBE, #A855F7);
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     border-radius: 10px;
     transition: width 0.3s ease;
     width: 0%;
@@ -889,11 +812,11 @@ select {
 
 .texto-pequeño {
     font-size: 12px;
-    color: #888;
+    color: var(--text-muted);
     margin: 0;
 }
 
-/* Notificaciones */
+/* ========== NOTIFICACIONES ========== */
 .notificacion-exito,
 .notificacion-error,
 .notificacion-temporal {
@@ -906,27 +829,28 @@ select {
 }
 
 .notificacion-exito .notificacion-contenido {
-    background: #d4edda;
-    border-left: 5px solid #28a745;
+    background: var(--success-color);
+    color: white;
     padding: 15px 20px;
     border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 20px var(--shadow-color);
 }
 
 .notificacion-error .notificacion-contenido {
-    background: #f8d7da;
-    border-left: 5px solid #dc3545;
+    background: var(--danger-color);
+    color: white;
     padding: 15px 20px;
     border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 20px var(--shadow-color);
 }
 
 .notificacion-temporal .notificacion-contenido {
-    background: white;
-    border-left: 5px solid #7B2FBE;
+    background: var(--bg-container);
+    color: var(--text-primary);
     padding: 15px 20px;
     border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 5px 20px var(--shadow-color);
+    border-left: 5px solid var(--primary-color);
 }
 
 .notificacion-contenido {
@@ -945,12 +869,14 @@ select {
 .notificacion-contenido h4 {
     margin: 0 0 5px;
     font-size: 16px;
+    color: inherit;
+    border: none;
 }
 
 .notificacion-contenido p {
     margin: 0;
     font-size: 14px;
-    color: #666;
+    color: inherit;
 }
 
 .acciones-error {
@@ -967,34 +893,35 @@ select {
     font-size: 13px;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
 }
 
 .btn-reintentar {
-    background: #7B2FBE;
-    color: white;
+    background: white;
+    color: var(--primary-color);
 }
 
 .btn-reintentar:hover {
-    background: #6B2FAE;
     transform: scale(1.02);
 }
 
 .btn-backup {
-    background: #6c757d;
+    background: rgba(255, 255, 255, 0.3);
     color: white;
 }
 
 .btn-backup:hover {
-    background: #5a6268;
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .btn-continuar {
-    background: #28a745;
+    background: rgba(255, 255, 255, 0.2);
     color: white;
 }
 
 .btn-continuar:hover {
-    background: #218838;
+    background: rgba(255, 255, 255, 0.4);
 }
 
 .desaparecer {
@@ -1022,4 +949,143 @@ select {
         transform: translateX(100px);
     }
 }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .contenedor {
+        padding: 25px;
+        margin: 10px;
+    }
+
+    .header-decor {
+        margin: -25px -25px 20px -25px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    .checkbox-group,
+    .radio-group {
+        grid-template-columns: 1fr;
+    }
+
+    .botones-container {
+        flex-direction: column;
+    }
+
+    .estrellas span {
+        font-size: 32px;
+    }
+
+    .highlight-card .materia-nombre {
+        font-size: 1.2rem;
+        padding: 10px 18px;
+    }
+
+    input[type="email"],
+    input[type="text"],
+    select,
+    textarea {
+        padding: 14px 18px;
+    }
+
+    .checkbox-item,
+    .radio-item {
+        padding: 15px;
+        min-height: 55px;
+    }
+
+    .checkbox-item input[type="checkbox"],
+    .radio-item input[type="radio"] {
+        transform: scale(1.2);
+        margin-right: 12px;
+    }
+
+    .tag {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+
+    .tag .close {
+        font-size: 18px;
+        width: 20px;
+        height: 20px;
+    }
+
+    .btn-modo {
+        top: 10px;
+        right: 10px;
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+    
+    .btn-modo span:not(.icono) {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .contenedor {
+        padding: 18px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    .estrellas span {
+        font-size: 28px;
+    }
+
+    .checkbox-item,
+    .radio-item {
+        padding: 12px;
+        min-height: 50px;
+    }
+
+    .checkbox-item span,
+    .radio-item span {
+        font-size: 14px;
+    }
+}
+
+@media (hover: none) {
+    .checkbox-item:hover,
+    .radio-item:hover {
+        transform: none;
+        border-color: var(--border-color);
+        background: var(--bg-input);
+    }
+
+    .checkbox-item.checked:hover,
+    .radio-item.checked:hover {
+        border-color: var(--primary-color);
+        background: var(--bg-hover);
+        transform: none;
+    }
+
+    .tag:hover {
+        transform: none;
+    }
+
+    .boton:hover {
+        transform: none;
+    }
+
+    .card:hover {
+        transform: none;
+    }
+
+    .btn-modo:hover {
+        transform: none;
+    }
 }
