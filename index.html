@@ -1100,46 +1100,264 @@ function generarResumen() {
 
 /* ========== ENVIAR RESPUESTAS A GOOGLE SHEETS ========== */
 function enviarRespuestas() {
-    // Bloqueamos el botón para evitar que le den click muchas veces
+    // Bloquear botón y mostrar estado de carga
     const btnSiguiente = document.getElementById('btnSiguiente');
-    if(btnSiguiente) btnSiguiente.disabled = true;
+    if(btnSiguiente) {
+        btnSiguiente.disabled = true;
+        btnSiguiente.innerHTML = '<span>⏳</span> Enviando...';
+    }
+
+    // Mostrar overlay de carga
+    mostrarOverlayCarga(true);
 
     const datosParaEnviar = {
         correo: correoUsuario,
         fecha: new Date().toLocaleString('es-CO'),
-        respuestas: respuestas
+        respuestas: respuestas,
+        totalAsignaturas: Object.keys(respuestas).length,
+        timestamp: new Date().toISOString()
     };
 
     // URL DEL SHEETS
-    const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzgT0EWFYPD9BbJSzlx_TI5eC3bEyeliYJrE7eA4lQM42BDEGvGQBY2Yr69Le_UWOcEtQ/exec"; 
+    const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzLZFMdEg5M13_7oiUdN5Nb4iNDlMkGPBksklkPtj21W94ZvFaR6j8mNtEQEKmrvtVX/exec";
+
+    // Timeout de 15 segundos
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     fetch(URL_GOOGLE_SCRIPT, {
         method: 'POST',
-        mode: 'no-cors', 
+        mode: 'no-cors',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(datosParaEnviar)
+        body: JSON.stringify(datosParaEnviar),
+        signal: controller.signal
     })
     .then(() => {
-        // Éxito: Mostramos el resumen y la pantalla final
-        document.getElementById('resumenRespuestas').innerHTML = generarResumen();
-        document.getElementById("pasoFormulario").classList.add("oculto");
-        document.getElementById("pantallaFinal").classList.remove("oculto");
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        clearTimeout(timeoutId);
+        mostrarOverlayCarga(false);
+        
+        // Guardar en historial local como backup
+        guardarHistorialLocal(datosParaEnviar);
+        
+        // Mostrar éxito con animación
+        mostrarExitoEnvio();
         
         // Limpiar localStorage después de enviar
         localStorage.removeItem('opinionesArtesUNAL');
     })
     .catch(error => {
+        clearTimeout(timeoutId);
         console.error('Error:', error);
-        alert('Hubo un problema al enviar tus respuestas. Por favor, inténtalo de nuevo.');
-        if(btnSiguiente) btnSiguiente.disabled = false;
+        mostrarOverlayCarga(false);
+        
+        // Guardar en localStorage como backup
+        guardarBackupLocal(datosParaEnviar);
+        
+        // Mostrar error con opciones
+        mostrarErrorEnvio(error);
+        
+        if(btnSiguiente) {
+            btnSiguiente.disabled = false;
+            btnSiguiente.innerHTML = '<span id="btnSiguienteTexto">➡️</span> Finalizar';
+        }
     });
+}
+
+/* ========== FUNCIONES AUXILIARES DE ENVÍO ========== */
+
+// Mostrar overlay de carga
+function mostrarOverlayCarga(visible) {
+    let overlay = document.getElementById('overlayCarga');
+    
+    if (!overlay && visible) {
+        overlay = document.createElement('div');
+        overlay.id = 'overlayCarga';
+        overlay.innerHTML = `
+            <div class="overlay-contenido">
+                <div class="spinner"></div>
+                <h3>Enviando tus respuestas...</h3>
+                <p>Por favor espera, esto puede tomar unos segundos</p>
+                <div class="barra-progreso">
+                    <div class="barra-llenado" id="barraProgresoEnvio" style="width: 0%"></div>
+                </div>
+                <p class="texto-pequeño" id="textoProgreso">Preparando datos...</p>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        
+        // Simular progreso
+        simularProgreso();
+    } else if (overlay && !visible) {
+        overlay.remove();
+    }
+}
+
+// Simular barra de progreso
+function simularProgreso() {
+    let progreso = 0;
+    const interval = setInterval(() => {
+        progreso += Math.random() * 15;
+        if (progreso > 90) {
+            clearInterval(interval);
+            progreso = 90;
+        }
+        const barra = document.getElementById('barraProgresoEnvio');
+        const texto = document.getElementById('textoProgreso');
+        if (barra) {
+            barra.style.width = Math.min(progreso, 90) + '%';
+        }
+        if (texto) {
+            const mensajes = [
+                'Preparando datos...',
+                'Empaquetando respuestas...',
+                'Enviando a servidor...',
+                'Casi listo...'
+            ];
+            const idx = Math.floor(progreso / 25);
+            texto.textContent = mensajes[Math.min(idx, mensajes.length - 1)];
+        }
+    }, 300);
+}
+
+// Mostrar éxito con animación
+function mostrarExitoEnvio() {
+    // Crear notificación flotante
+    const notificacion = document.createElement('div');
+    notificacion.className = 'notificacion-exito';
+    notificacion.innerHTML = `
+        <div class="notificacion-contenido">
+            <span class="icono-exito">✅</span>
+            <div>
+                <h4>¡Respuestas enviadas!</h4>
+                <p>Tus opiniones han sido guardadas exitosamente</p>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(notificacion);
+    
+    // Mostrar resumen
+    setTimeout(() => {
+        document.getElementById('resumenRespuestas').innerHTML = generarResumen();
+        document.getElementById("pasoFormulario").classList.add("oculto");
+        document.getElementById("pantallaFinal").classList.remove("oculto");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        
+        // Quitar notificación después de 3 segundos
+        setTimeout(() => {
+            notificacion.classList.add('desaparecer');
+            setTimeout(() => notificacion.remove(), 500);
+        }, 3000);
+    }, 800);
+}
+
+// Mostrar error con opciones
+function mostrarErrorEnvio(error) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'notificacion-error';
+    errorDiv.innerHTML = `
+        <div class="notificacion-contenido">
+            <span class="icono-error">⚠️</span>
+            <div>
+                <h4>Problema al enviar</h4>
+                <p>No pudimos enviar tus respuestas. Se guardaron localmente.</p>
+                <div class="acciones-error">
+                    <button onclick="reintentarEnvio()" class="btn-reintentar">
+                        🔄 Reintentar
+                    </button>
+                    <button onclick="descargarBackup()" class="btn-backup">
+                        💾 Descargar backup
+                    </button>
+                    <button onclick="continuarSinEnviar()" class="btn-continuar">
+                        ➡️ Ver resumen
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(errorDiv);
+}
+
+// Guardar backup en localStorage
+function guardarBackupLocal(datos) {
+    try {
+        const backups = JSON.parse(localStorage.getItem('backupOpinionesArtes') || '[]');
+        backups.push({
+            ...datos,
+            fechaBackup: new Date().toISOString()
+        });
+        // Mantener solo los últimos 5 backups
+        if (backups.length > 5) backups.shift();
+        localStorage.setItem('backupOpinionesArtes', JSON.stringify(backups));
+    } catch (e) {
+        console.error('Error guardando backup:', e);
+    }
+}
+
+// Reintentar envío
+function reintentarEnvio() {
+    const backups = JSON.parse(localStorage.getItem('backupOpinionesArtes') || '[]');
+    if (backups.length > 0) {
+        const ultimo = backups[backups.length - 1];
+        // Restaurar datos
+        correoUsuario = ultimo.correo;
+        respuestas = ultimo.respuestas;
+        // Reintentar envío
+        document.querySelector('.notificacion-error')?.remove();
+        enviarRespuestas();
+    } else {
+        alert('No hay backup disponible para reintentar');
+    }
+}
+
+// Descargar backup como archivo
+function descargarBackup() {
+    const backups = JSON.parse(localStorage.getItem('backupOpinionesArtes') || '[]');
+    if (backups.length === 0) {
+        alert('No hay datos de backup para descargar');
+        return;
+    }
+    
+    const blob = new Blob([JSON.stringify(backups, null, 2)], {type: 'application/json'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `backup_encuesta_${new Date().getTime()}.json`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+}
+
+// Continuar sin enviar (ver resumen)
+function continuarSinEnviar() {
+    document.querySelector('.notificacion-error')?.remove();
+    document.getElementById('resumenRespuestas').innerHTML = generarResumen();
+    document.getElementById("pasoFormulario").classList.add("oculto");
+    document.getElementById("pantallaFinal").classList.remove("oculto");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Guardar historial local
+function guardarHistorialLocal(datos) {
+    try {
+        const historial = JSON.parse(localStorage.getItem('historialEnvios') || '[]');
+        historial.push({
+            ...datos,
+            fechaEnvio: new Date().toISOString(),
+            exitoso: true
+        });
+        localStorage.setItem('historialEnvios', JSON.stringify(historial));
+    } catch (e) {
+        console.error('Error guardando historial:', e);
+    }
 }
 
 /* ========== REINICIAR FORMULARIO ========== */
 function reiniciar() {
+    // Confirmar antes de reiniciar
+    if (!confirm('¿Estás seguro de que quieres reiniciar? Perderás todas las respuestas no enviadas.')) {
+        return;
+    }
+    
     // Limpiar localStorage
     localStorage.removeItem('opinionesArtesUNAL');
     
@@ -1162,7 +1380,7 @@ function reiniciar() {
     document.getElementById('errorCorreo').style.display = 'none';
     document.getElementById('btnContinuarCorreo').disabled = true;
     
-    // Mostrar paso inicial
+    // Mostrar paso inicial con animación
     document.getElementById("pantallaFinal").classList.add("oculto");
     document.getElementById("pasoFormulario").classList.add("oculto");
     document.getElementById("pasoSeleccion").classList.add("oculto");
@@ -1170,8 +1388,35 @@ function reiniciar() {
     
     // Limpiar formulario
     limpiarFormulario();
+    
+    // Scroll al inicio
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    
+    // Mostrar mensaje de reinicio
+    mostrarNotificacionTemporal('🔄', 'Formulario reiniciado', 'Puedes comenzar de nuevo');
 }
-</script>
+
+/* ========== NOTIFICACIONES TEMPORALES ========== */
+function mostrarNotificacionTemporal(icono, titulo, mensaje) {
+    const notif = document.createElement('div');
+    notif.className = 'notificacion-temporal';
+    notif.innerHTML = `
+        <div class="notificacion-contenido">
+            <span class="icono">${icono}</span>
+            <div>
+                <h4>${titulo}</h4>
+                <p>${mensaje}</p>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(notif);
+    
+    setTimeout(() => {
+        notif.classList.add('desaparecer');
+        setTimeout(() => notif.remove(), 500);
+    }, 3000);
+}
+    </script>
 
 </body>
 </html>
