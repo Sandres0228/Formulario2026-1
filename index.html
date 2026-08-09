@@ -1112,14 +1112,12 @@ function enviarRespuestas() {
 
     const datosParaEnviar = {
         correo: correoUsuario,
-        fecha: new Date().toLocaleString('es-CO'),
         respuestas: respuestas,
         totalAsignaturas: Object.keys(respuestas).length,
-        timestamp: new Date().toISOString()
     };
 
     // URL DEL SHEETS
-    const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzLZFMdEg5M13_7oiUdN5Nb4iNDlMkGPBksklkPtj21W94ZvFaR6j8mNtEQEKmrvtVX/exec";
+    const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbxBNp7n7Q91IK21HtSLSOwLb4kOSzCztfE9sp_vxx7V9DO6jrLbhramchd2ddyMbUg_/exec";
 
     // Timeout de 15 segundos
     const controller = new AbortController();
