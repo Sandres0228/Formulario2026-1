@@ -1250,15 +1250,15 @@ function simularProgreso() {
         }
         if (texto) {
             const mensajes = [
-                'Preparando datos...',
-                'Empaquetando respuestas...',
+                'Preparando respuestas...',
+                'Avisando al repre...',
                 'Enviando a servidor...',
                 'Casi listo...'
             ];
             const idx = Math.floor(progreso / 25);
             texto.textContent = mensajes[Math.min(idx, mensajes.length - 1)];
         }
-    }, 300);
+    }, 200);
 }
 
 // Mostrar éxito con animación
@@ -1306,9 +1306,6 @@ function mostrarErrorEnvio(error) {
                     <button onclick="reintentarEnvio()" class="btn-reintentar">
                         🔄 Reintentar
                     </button>
-                    <button onclick="descargarBackup()" class="btn-backup">
-                        💾 Descargar backup
-                    </button>
                     <button onclick="continuarSinEnviar()" class="btn-continuar">
                         ➡️ Ver resumen
                     </button>
@@ -1348,15 +1345,6 @@ function reintentarEnvio() {
         enviarRespuestas();
     } else {
         alert('No hay backup disponible para reintentar');
-    }
-}
-
-// Descargar backup como archivo
-function descargarBackup() {
-    const backups = JSON.parse(localStorage.getItem('backupOpinionesArtes') || '[]');
-    if (backups.length === 0) {
-        alert('No hay datos de backup para descargar');
-        return;
     }
     
     const blob = new Blob([JSON.stringify(backups, null, 2)], {type: 'application/json'});
